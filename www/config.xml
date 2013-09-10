@@ -1,9 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.pacioos.voyager" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget xmlns = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "org.pacioos.voyager"
+        versionCode="100" 
+        version   = "1.0.0">
     <name>PacIOOS Voyager</name>
-    <description>Welcome to the mobile version of PacIOOS Voyager. Map and access real-time ocean observations, forecasts, and related information. The Pacific Islands Ocean Observing System (PacIOOS) is one of 11 regional associations in the U.S. Integrated Ocean Observing System (IOOS) and spans the whole of U.S. interests in the insular Pacific region. IOOS provides timely, reliable, and accurate ocean information to support a safe, clean, productive ocean and resilient coastal zone.</description>
+    <description>
+        Map and access real-time ocean observations, forecasts, and related information for U.S. interests in the Pacific. From the Pacific Islands Ocean Observing System (PacIOOS).
+    </description> 
     <author email="jmaurer@hawaii.edu" href="http://pacioos.org">John Maurer</author>
-    <!--<feature name="http://api.phonegap.com/1.0/device" />-->
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
@@ -32,19 +37,5 @@
     <icon gap:platform="ios" src="img/voyager_icon_144.png" width="144" height="144" />
     <icon gap:platform="webos" src="img/voyager_icon_64.png" width="64" height="64" />
     <icon gap:platform="winphone" src="img/voyager_icon_48.png" width="48" height="48" />
-    <!--<icon gap:platform="winphone" gap:role="background" src="res/icon/windows-phone/icon-173.png" />-->
-    <!--
-    Splash screen settings:
-    <gap:splash gap:density="ldpi" gap:platform="android" src="res/screen/android/screen-ldpi-portrait.png" />
-    <gap:splash gap:density="mdpi" gap:platform="android" src="res/screen/android/screen-mdpi-portrait.png" />
-    <gap:splash gap:density="hdpi" gap:platform="android" src="res/screen/android/screen-hdpi-portrait.png" />
-    <gap:splash gap:density="xhdpi" gap:platform="android" src="res/screen/android/screen-xhdpi-portrait.png" />
-    <gap:splash gap:platform="blackberry" src="res/screen/blackberry/screen-225.png" />
-    <gap:splash gap:platform="ios" height="480" src="res/screen/ios/screen-iphone-portrait.png" width="320" />
-    <gap:splash gap:platform="ios" height="960" src="res/screen/ios/screen-iphone-portrait-2x.png" width="640" />
-    <gap:splash gap:platform="ios" height="1024" src="res/screen/ios/screen-ipad-portrait.png" width="768" />
-    <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
-    <gap:splash gap:platform="winphone" src="res/screen/windows-phone/screen-portrait.jpg" />
-    -->
     <access origin="*" />
 </widget>
