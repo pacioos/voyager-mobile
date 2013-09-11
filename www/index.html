@@ -7415,11 +7415,9 @@ Loads Google Maps API into map frame and does other page initialization stuff.
 
 function loadMap () {
 
-  // Construct Voyager URL for embedding full-screen map; include EEZ and other
-  // useful maritime and geographic boundaries:
+  // Construct Voyager URL for embedding full-screen map:
 
-  //var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager/full.html?output=embed&o=bound:4+5,geog:1+2+7+5+6'; 
-  var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager_dev/full.html?output=embed&mobile=1';
+  var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager/full.html?output=embed&mobile=1';
 
   // Load Voyager map into iframe; run asynchronously so it doesn't freeze up
   // layer selection screen:
