@@ -159,6 +159,11 @@ var rmiFlag = new Image( 32, 32 );
 
 var isTouch = (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
 
+// Store page dimensions:
+
+var page_width = null;
+var page_height = null;
+
 // Store last displayed category, map type, region, island, etc.:
 
 var prevCategory = null;
@@ -7169,6 +7174,32 @@ function onDeviceReady () {
   );
   */ 
 
+  // Resize buttons and info windows for pages smaller than iPhone widths?:
+
+  page_width = $( window ).width();
+  var iphone_width = 320;
+  var button_width = 220;
+  var info_dialog_width = 300;
+
+  if ( page_width < iphone_width ) {
+    var width_offset = iphone_width - page_width;
+    var new_button_width = button_width - width_offset; 
+    $( 'button[name="region"]' ).width( new_button_width );
+    $( 'button[name="variable"]' ).width( new_button_width );
+    info_dialog_width = info_dialog_width - width_offset;
+    $( '#regions' ).width( page_width );
+    $( '#variables' ).width( page_width );
+  }
+
+  page_height = $( window ).height();
+  var iphone_height = 444; // with address and nav bars; 460 w/o
+  var info_dialog_height = 450;
+
+  if ( page_height < iphone_height ) {
+    var height_offset = iphone_height - page_height;
+    info_dialog_height = info_dialog_height - height_offset;
+  }
+
   // jQuery UI buttons:
 
   /* INTRO BUTTONS: */
@@ -7232,8 +7263,8 @@ function onDeviceReady () {
       autoOpen: false,
       draggable: false,
       resizable: false,
-      width: 300,
-      height: 450,
+      width: info_dialog_width,
+      height: info_dialog_height,
       open: function () {
         /* Close dialog window if body clicked:
         $( this ).click(
@@ -7249,6 +7280,8 @@ function onDeviceReady () {
             $( me ).dialog( 'close' );
           }
         );
+        // If content too large for window, scroll to top:
+        $( '.ui-dialog-content' ).scrollTop( 0 );
       }
     }
   ); 
@@ -7417,7 +7450,7 @@ function loadMap () {
 
   // Construct Voyager URL for embedding full-screen map:
 
-  var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager/full.html?output=embed&mobile=1';
+  var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager_dev/full.html?output=embed&mobile=1';
 
   // Load Voyager map into iframe; run asynchronously so it doesn't freeze up
   // layer selection screen:
@@ -8202,7 +8235,7 @@ function showVariables ( region, island ) {
 <center>
 <img id="intro_pacioos_logo" src="img/pacioos_logo_249x100.png" width="249" height="100" style="margin-top: -10px;"/><br/><br/>
 <button name="voyagerInfoButton" id="voyagerInfoButton" data-dropdown="#voyagerInfo" data-horizontal-offset="6" style="margin-top: 10px; margin-bottom: 8px;">About this site...</button>
-<button style="margin-top: 10px; margin-bottom: 8px; width: 112px;">Enter Site</button><br/>
+<button style="margin-top: 10px; margin-bottom: 8px; width: 115px;">Enter Site</button><br/>
 <img id="intro_voyager_logo" src="img/voyagerlogo_mobile_249x100.png" width="249" height="100"/><br/>
 <img id="intro_slogan_logo" src="img/byobserving_187x23.png" width="187" height="23" style="margin-top: -6px;"/>
 </center>
@@ -8393,7 +8426,7 @@ function showVariables ( region, island ) {
 
 <!-- Voyager Mobile summary: -->
 
-<div id="voyagerInfo" name="infoDialog" title="About this site..." style="display: none; background-color: white; overflow: hidden; font-size: small;">
+<div id="voyagerInfo" name="infoDialog" title="About this site..." style="display: none; background-color: white; font-size: small;">
 <p style="margin-top: 6px; margin-bottom: 4px;">Welcome to the mobile version of <b>PacIOOS Voyager</b>. Map and access real-time ocean observations, forecasts, and related information.</p><img src="http://oos.soest.hawaii.edu/pacioos/images/logo_IOOS_50px.png" align="right" style="padding-left: 6px; padding-bottom: 2px;" width="108" height="50"/><p style="margin-bottom: 4px;">The Pacific Islands Ocean Observing System (<a id="pacioos_url" href="http://pacioos.org" class="normalLink">PacIOOS</a>) is one of 11 regional associations in the U.S. Integrated Ocean Observing System (<a href="http://www.ioos.gov" class="normalLink">IOOS</a>) and spans the whole of U.S. interests in the insular Pacific region. IOOS provides timely, reliable, and accurate ocean information to support a safe, clean, productive ocean and resilient coastal zone.</p>
 <p>We value your feedback. <a href="mailto:John Maurer <jmaurer@hawaii.edu>, Jim Potemra <jimp@hawaii.edu>, Melissa Iwamoto <mmiwamot@hawaii.edu>?subject=PacIOOS Voyager feedback" class="normalLink">Please contact us</a> with any questions or suggestions.</p>
 </div>
@@ -8524,7 +8557,7 @@ function showVariables ( region, island ) {
   <p style="margin: 0"><b>More info:</b> <a id="asLink" href="http://en.wikipedia.org/wiki/American_samoa" class="normalLink">Wikipedia</a></p>
 </div>
 
-<div id="cnmiInfo" name="infoDialog" title="Regional summary..." style="display: none; background-color: white; overflow: hidden; font-size: small;">
+<div id="cnmiInfo" name="infoDialog" title="Regional summary..." style="display: none; background-color: white; font-size: small;">
   <h2 style="margin: 0">Commonwealth of the Northern Mariana Islands</h2>
   <img id="cnmi_flag" src="img/flags/32/CNMI.png" width="32" height="32" style="position: absolute; top: 163px; left: 247px;"/>
   <img src="http://maps.googleapis.com/maps/api/staticmap?center=0,180&zoom=1&size=268x140&sensor=false&markers=color:red|15.1115,146.1676" style="margin-top: 6px; margin-bottom: 8px;"/>
@@ -8899,7 +8932,7 @@ function showVariables ( region, island ) {
     </ul>
   </div>
   <div name="windInfos" id="windInfo_sat">
-    <img src="im/icon_satellite.png" width="32" height="32" align="left" style="padding-right: 5px; margin-left: -8px; margin-top: -3px;"/><h2>Satellite</h2>
+    <img src="img/icon_satellite.png" width="32" height="32" align="left" style="padding-right: 5px; margin-left: -8px; margin-top: -3px;"/><h2>Satellite</h2>
     <p style="margin-left: 28px; margin-top: -14px;"><i>Remotely sensed from outer space:</i></p>
     <ul style="margin-bottom: 20px;">
       <li name="windDataset_sat" id="windDataset_sat_ascat"><a href="http://manati.star.nesdis.noaa.gov/products/ASCAT.php" class="normalLink">Advanced SCATterometer (ASCAT)</a> via <a href="http://oceanwatch.pifsc.noaa.gov/thredds/catalog.html" class="normalLink">NOAA OceanWatch</a></li>
