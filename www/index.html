@@ -154,6 +154,10 @@ var palauFlag = new Image( 32, 32 );
 var rmiFlag = new Image( 32, 32 );
     rmiFlag.src = 'img/flags/32/Marshall_Islands.png';
 
+// Name of cookie to remember region or not?:
+
+var region_cookie = 'voyager_mobile_remember_region';
+
 // Is this a touch device?
 // http://stackoverflow.com/questions/4817029/whats-the-best-way-to-detect-a-touch-screen-device-using-javascript
 
@@ -7218,7 +7222,26 @@ function onDeviceReady () {
     }
   ).next().button().click(
     function () {
-      showRegions();
+
+      // Skip region selection screen if cookie previously set:
+
+      if ( getCookie( region_cookie ) ) {
+        var prev_region = getCookie( region_cookie );
+        var prev_island = null;
+        if ( prev_region.match( /:/ ) ) {
+          var prev_region_array = new Array();
+          prev_region_array = prev_region.split( ':' );
+          prev_region = prev_region_array[ 0 ];
+          prev_island = prev_region_array[ 1 ];
+        }
+        showVariables( prev_region, prev_island ); 
+      }
+
+      // Otherwise, show region selection screen:
+
+      else {
+        showRegions();
+      }
     }
   ).parent().buttonset().next().hide().menu();
 
@@ -7940,6 +7963,10 @@ Hide other panels and show region selection menu.
 
 function showRegions () {
 
+  // Check the remember box?:
+
+  document.getElementById( 'remember_region' ).checked = getCookie( region_cookie );
+
   document.getElementById( 'outer_border' ).style.display = 'none';
   document.getElementById( 'intro'        ).style.display = 'none';
   document.getElementById( 'variables'    ).style.display = 'none';
@@ -7956,10 +7983,22 @@ Hide map frame and show variables menu.
 
 function showVariables ( region, island ) {
 
+  // Set region cookie?:
+
+  if ( document.getElementById( 'remember_region' ).checked ) {
+    var cookie_value = region;
+    if ( island ) {
+      cookie_value += ':' + island;
+    }
+    setCookie( region_cookie, cookie_value, 365 );
+  }
+
   // Show/hide appropriate screens:
  
   $( '#loading_icon' ).hide();
   document.getElementById( 'loading_label' ).style.display = 'none';
+  document.getElementById( 'outer_border' ).style.display  = 'none';
+  document.getElementById( 'intro'        ).style.display  = 'none';
   document.getElementById( 'regions'       ).style.display = 'none';
   document.getElementById( 'variables'     ).style.display = '';
   document.getElementById( 'background'    ).style.display = '';
@@ -8204,6 +8243,86 @@ function showVariables ( region, island ) {
 
 } // showVariables()
 
+
+/*
+toggleRememberRegion()
+Sets or removes a browser cookie to store whether the user has selected to
+save their region selection or not so that subsequent visits to the site
+can skip over the region selection screen.
+*/
+
+function toggleRememberRegion ( on ) {
+
+  // Set cookie:
+
+  if ( on ) {
+    // Do nothing... showVariables() function will set appropriate cookie value
+  }
+
+  // Remove cookie, if any (by setting days until expiration to negative):
+
+  else {
+    if ( getCookie( region_cookie ) ) {
+      setCookie( region_cookie, false, -10 );
+    }
+  }
+
+} // toggleRememberRegion()
+
+
+/*
+getCookie()
+adapted from: http://www.w3schools.com/js/js_cookies.asp
+Returns value of the given cookie name, if it exists in the browser.
+*/
+ 
+function getCookie ( cookie_name ) {
+
+  var cookies = new Array();
+  cookies = document.cookie.split( ';' );
+
+  for ( var i = 0; i < cookies.length;i++ ) {
+    var this_name  = cookies[ i ].substr( 0, cookies[ i ].indexOf( '=' ) );
+    var this_value = cookies[ i ].substr( cookies[ i ].indexOf( '=' ) + 1 );
+    this_name = this_name.replace( /^\s+|\s+$/g, '' ); // strip leading or trailing spaces
+    if ( this_name == cookie_name ) {
+      return unescape( this_value );
+    }
+  }
+
+} // getCookie()
+
+
+/*
+setCookie()
+adapted from: http://www.w3schools.com/js/js_cookies.asp
+Stores a cookie in the user's browser with the given name, value, and the
+number of days until the cookie expires. Do not specify a number of days
+to create a permanent cookie.
+*/
+
+function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
+
+  var expiration_date = new Date();
+  expiration_date.setDate( expiration_date.getDate() + num_days_before_expires );
+
+  // Set cookie value:
+
+  cookie_value = escape( cookie_value );
+
+  // Add expiration date?:
+
+  if ( num_days_before_expires != null ) {
+    cookie_value += '; expires=' + expiration_date.toUTCString();
+  }
+
+  // Create cookie:
+
+  document.cookie = cookie_name + '=' + cookie_value;
+
+} // setCookie()
+
+
 </script>
 
 </head>
@@ -8245,6 +8364,7 @@ function showVariables ( region, island ) {
 <!-- REGIONS DIV: -->
 <div id="regions" class="centered" style="height: 420px; width: 300px; z-index: 5; display: none;">
 <a onClick="showIntro();" title="Return to Voyager Mobile home screen..." style="cursor: pointer; cursor: hand;"><img src="img/homeLighter.png" width="19" height="19" align="absmiddle" onMouseOver="this.src='img/homeHighlight.png'" onMouseOut="this.src='img/homeLighter.png'" style="padding-bottom: 11px; padding-left: 14px;"/></a>
+<span style="position: absolute; right: 10px;"><font color="white"><b>remember</b></font> <input id="remember_region" type="checkbox" onClick="this.blur(); toggleRememberRegion( this.checked );"/></span>
 <center>
   <div>
     <div>
