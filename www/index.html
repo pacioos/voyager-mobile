@@ -7162,6 +7162,11 @@ $( document ).ready(
 
     if ( isApp ) {
       document.addEventListener( 'deviceready', onDeviceReady, false );
+
+      // App's cannot use cookies so hide the "remember" box; no need for it
+      // anyways since revisiting the app opens to last screen:
+
+      document.getElementById( 'remember_div' ).style.display = 'none';
     }
     else {
       onDeviceReady();
@@ -7239,7 +7244,12 @@ function onDeviceReady () {
           prev_region = prev_region_array[ 0 ];
           prev_island = prev_region_array[ 1 ];
         }
-        showVariables( prev_region, prev_island ); 
+        if ( prev_region in oc( [ 'all', 'as', 'cnmi', 'fsm', 'guam', 'hi', 'minor', 'palau', 'rmi' ] ) ) {
+          showVariables( prev_region, prev_island ); 
+        }
+        else {
+          showRegions();
+        }
       }
 
       // Otherwise, show region selection screen:
@@ -8369,7 +8379,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
 <!-- REGIONS DIV: -->
 <div id="regions" class="centered" style="height: 420px; width: 300px; z-index: 5; display: none;">
 <a onClick="showIntro();" title="Return to Voyager Mobile home screen..." style="cursor: pointer; cursor: hand;"><img src="img/homeLighter.png" width="19" height="19" align="absmiddle" onMouseOver="this.src='img/homeHighlight.png'" onMouseOut="this.src='img/homeLighter.png'" style="padding-bottom: 11px; padding-left: 14px;"/></a>
-<span style="position: absolute; right: 10px;"><font color="white"><b>remember</b></font> <input id="remember_region" type="checkbox" onClick="this.blur(); toggleRememberRegion( this.checked );"/></span>
+<span id="remember_div" style="position: absolute; right: 10px;"><font color="white"><b>remember</b></font> <input id="remember_region" type="checkbox" onClick="this.blur(); toggleRememberRegion( this.checked );"/></span>
 <center>
   <div>
     <div>
