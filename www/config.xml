@@ -4,6 +4,7 @@
         id        = "org.pacioos.voyager"
         versionCode="100" 
         version   = "1.0.0">
+    <preference name="phonegap-version" value="3.1.0" />
     <name>PacIOOS Voyager</name>
     <description>
         Map and access real-time ocean observations, forecasts, and related information for U.S. interests in the Pacific. From the Pacific Islands Ocean Observing System (PacIOOS).
