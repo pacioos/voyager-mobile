@@ -298,6 +298,7 @@ var minZooms = {
   'roms_hiomsg': 14,
   'roms_mari': 10,
   'roms_marig': 13,
+  'roms_samoa': 11,
   'swan_apra': 16,
   'swan_bigisland': 12,
   'swan_guam': 13,
@@ -550,9 +551,9 @@ var regions = {
       'currents': {
         'sources': {
           'mod': {
-            'url': 'ofore:7:kts:d1',
+            'url': 'ofore:3:kts:d8',
             'category': 'oceanForecast',
-            'datasets': [ 'hycom' ],
+            'datasets': [ 'roms_samoa' ],
             'date_field': 'oceanForecastDate',
             'time_field': 'oceanForecastTime',
             'depth_field': 'oceanForecastDepth'
@@ -573,9 +574,9 @@ var regions = {
       'salinity': {
         'sources': {
           'mod': {
-            'url': 'ofore:6:psu:d1',
+            'url': 'ofore:2:psu:d8',
             'category': 'oceanForecast',
-            'datasets': [ 'hycom' ],
+            'datasets': [ 'roms_samoa' ],
             'date_field': 'oceanForecastDate',
             'time_field': 'oceanForecastTime',
             'depth_field': 'oceanForecastDepth'
@@ -600,9 +601,9 @@ var regions = {
       'sst': {
         'sources': {
           'mod': {
-            'url': 'ofore:5:f:d1',
+            'url': 'ofore:1:f:d8',
             'category': 'oceanForecast',
-            'datasets': [ 'hycom' ],
+            'datasets': [ 'roms_samoa' ],
             'date_field': 'oceanForecastDate',
             'time_field': 'oceanForecastTime',
             'depth_field': 'oceanForecastDepth'
@@ -735,9 +736,9 @@ var regions = {
           'currents': {
             'sources': {
               'mod': {
-                'url': 'ofore:7:kts:d1',
+                'url': 'ofore:3:kts:d8',
                 'category': 'oceanForecast',
-                'datasets': [ 'hycom' ],
+                'datasets': [ 'roms_samoa' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
@@ -747,9 +748,9 @@ var regions = {
           'salinity': {
             'sources': {
               'mod': {
-                'url': 'ofore:6:psu:d1',
+                'url': 'ofore:2:psu:d8',
                 'category': 'oceanForecast',
-                'datasets': [ 'hycom' ],
+                'datasets': [ 'roms_samoa' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
@@ -767,9 +768,9 @@ var regions = {
           'sst': {
             'sources': {
               'mod': {
-                'url': 'ofore:5:f:d1',
+                'url': 'ofore:1:f:d8',
                 'category': 'oceanForecast',
-                'datasets': [ 'hycom' ],
+                'datasets': [ 'roms_samoa' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
@@ -1168,9 +1169,9 @@ var regions = {
           'currents': {
             'sources': {
               'mod': {
-                'url': 'ofore:7:kts:d1',
+                'url': 'ofore:3:kts:d8',
                 'category': 'oceanForecast',
-                'datasets': [ 'hycom' ],
+                'datasets': [ 'roms_samoa' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
@@ -1190,9 +1191,9 @@ var regions = {
           'salinity': {
             'sources': {
               'mod': {
-                'url': 'ofore:6:psu:d1',
+                'url': 'ofore:2:psu:d8',
                 'category': 'oceanForecast',
-                'datasets': [ 'hycom' ],
+                'datasets': [ 'roms_samoa' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
@@ -1216,9 +1217,9 @@ var regions = {
           'sst': {
             'sources': {
               'mod': {
-                'url': 'ofore:5:f:d1',
+                'url': 'ofore:1:f:d8',
                 'category': 'oceanForecast',
-                'datasets': [ 'hycom' ],
+                'datasets': [ 'roms_samoa' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
@@ -4681,16 +4682,16 @@ var regions = {
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
-              },
-              'mod4': {
-                'url': 'ofore:3:kts:d3',
-                'category': 'oceanForecast',
-                'datasets': [ 'roms_hiog' ],
-                'bounds': 'zoomToBounds( 20.7339, -157.1619, 20.9566, -156.8848 )',
-                'date_field': 'oceanForecastDate',
-                'time_field': 'oceanForecastTime',
-                'depth_field': 'oceanForecastDepth'
               }
+              //'mod4': {
+              //  'url': 'ofore:3:kts:d3',
+              //  'category': 'oceanForecast',
+              //  'datasets': [ 'roms_hiog' ],
+              //  'bounds': 'zoomToBounds( 20.7339, -157.1619, 20.9566, -156.8848 )',
+              //  'date_field': 'oceanForecastDate',
+              //  'time_field': 'oceanForecastTime',
+              //  'depth_field': 'oceanForecastDepth'
+              //}
             }
           },
           'doppler': {
@@ -4737,20 +4738,20 @@ var regions = {
               'mod': {
                 'url': 'ofore:1:f:d2',
                 'category': 'oceanForecast',
-                'datasets': [ 'roms' ],
+                'datasets': [ 'roms_hiig' ],
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
               },
-              'mod4': {
-                'url': 'ofore:1:f:d3',
-                'category': 'oceanForecast',
-                'datasets': [ 'roms_hiog' ],
-                'bounds': 'zoomToBounds( 20.7339, -157.1619, 20.9566, -156.8848 )',
-                'date_field': 'oceanForecastDate',
-                'time_field': 'oceanForecastTime',
-                'depth_field': 'oceanForecastDepth'
-              },
+              //'mod4': {
+              //  'url': 'ofore:1:f:d3',
+              //  'category': 'oceanForecast',
+              //  'datasets': [ 'roms_hiog' ],
+              //  'bounds': 'zoomToBounds( 20.7339, -157.1619, 20.9566, -156.8848 )',
+              //  'date_field': 'oceanForecastDate',
+              //  'time_field': 'oceanForecastTime',
+              //  'depth_field': 'oceanForecastDepth'
+              //},
               'sat': {
                 'url': 'sat:2:f:d2',
                 'category': 'satelliteData',
@@ -5100,16 +5101,16 @@ var regions = {
                 'date_field': 'oceanForecastDate',
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
-              },
-              'mod4': {
-                'url': 'ofore:3:kts:d3',
-                'category': 'oceanForecast',
-                'datasets': [ 'roms_hiog' ],
-                'bounds': 'zoomToBounds( 20.9684, -157.5166, 21.2989, -156.9320 )',
-                'date_field': 'oceanForecastDate',
-                'time_field': 'oceanForecastTime',
-                'depth_field': 'oceanForecastDepth'
               }
+              //'mod4': {
+              //  'url': 'ofore:3:kts:d3',
+              //  'category': 'oceanForecast',
+              //  'datasets': [ 'roms_hiog' ],
+              //  'bounds': 'zoomToBounds( 20.9684, -157.5166, 21.2989, -156.9320 )',
+              //  'date_field': 'oceanForecastDate',
+              //  'time_field': 'oceanForecastTime',
+              //  'depth_field': 'oceanForecastDepth'
+              //}
             }
           },
           'doppler': {
@@ -5161,15 +5162,15 @@ var regions = {
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
               },
-              'mod4': {
-                'url': 'ofore:1:f:d3',
-                'category': 'oceanForecast',
-                'datasets': [ 'roms_hiog' ],
-                'bounds': 'zoomToBounds( 20.9684, -157.5166, 21.2989, -156.9320 )',
-                'date_field': 'oceanForecastDate',
-                'time_field': 'oceanForecastTime',
-                'depth_field': 'oceanForecastDepth'
-              },
+              //'mod4': {
+              //  'url': 'ofore:1:f:d3',
+              //  'category': 'oceanForecast',
+              //  'datasets': [ 'roms_hiog' ],
+              //  'bounds': 'zoomToBounds( 20.9684, -157.5166, 21.2989, -156.9320 )',
+              //  'date_field': 'oceanForecastDate',
+              //  'time_field': 'oceanForecastTime',
+              //  'depth_field': 'oceanForecastDepth'
+              //},
               'sat': {
                 'url': 'sat:2:f:d2',
                 'category': 'satelliteData',
@@ -5462,15 +5463,15 @@ var regions = {
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
               },
-              'mod2': {
-                'url': 'ofore:3:kts:d3',
-                'category': 'oceanForecast',
-                'datasets': [ 'roms_hiog' ],
-                'bounds': 'zoomToBounds( 20.9, -158.3, 21.4, -157.6 )',
-                'date_field': 'oceanForecastDate',
-                'time_field': 'oceanForecastTime',
-                'depth_field': 'oceanForecastDepth'
-              },
+              //'mod2': {
+              //  'url': 'ofore:3:kts:d3',
+              //  'category': 'oceanForecast',
+              //  'datasets': [ 'roms_hiog' ],
+              //  'bounds': 'zoomToBounds( 20.9, -158.3, 21.4, -157.6 )',
+              //  'date_field': 'oceanForecastDate',
+              //  'time_field': 'oceanForecastTime',
+              //  'depth_field': 'oceanForecastDepth'
+              //},
               'mod3': {
                 'url': 'ofore:3:kts:d4',
                 'category': 'oceanForecast',
@@ -5550,15 +5551,15 @@ var regions = {
                 'time_field': 'oceanForecastTime',
                 'depth_field': 'oceanForecastDepth'
               },
-              'mod2': {
-                'url': 'ofore:1:f:d3',
-                'category': 'oceanForecast',
-                'datasets': [ 'roms_hiog' ],
-                'bounds': 'zoomToBounds( 20.9, -158.3, 21.4, -157.6 )', 
-                'date_field': 'oceanForecastDate',
-                'time_field': 'oceanForecastTime',
-                'depth_field': 'oceanForecastDepth'
-              },
+              //'mod2': {
+              //  'url': 'ofore:1:f:d3',
+              //  'category': 'oceanForecast',
+              //  'datasets': [ 'roms_hiog' ],
+              //  'bounds': 'zoomToBounds( 20.9, -158.3, 21.4, -157.6 )', 
+              //  'date_field': 'oceanForecastDate',
+              //  'time_field': 'oceanForecastTime',
+              //  'depth_field': 'oceanForecastDepth'
+              //},
               'mod3': {
                 'url': 'ofore:1:f:d4',
                 'category': 'oceanForecast',
@@ -8227,7 +8228,7 @@ function loadMap () {
 
   // Construct Voyager URL for embedding full-screen map:
 
-  var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager_dev/full.html?output=embed&mobile=1';
+  var map_url = 'http://oos.soest.hawaii.edu/pacioos/voyager/full.html?output=embed&mobile=1';
 
   // Load Voyager map into iframe; run asynchronously so it doesn't freeze up
   // layer selection screen:
@@ -10524,6 +10525,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
       <li class="currentsDataset_mod" id="currentsDataset_mod_roms_hiomsg"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
       <li class="currentsDataset_mod" id="currentsDataset_mod_roms_mari"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
       <li class="currentsDataset_mod" id="currentsDataset_mod_roms_marig"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
+      <li class="currentsDataset_mod" id="currentsDataset_mod_roms_samoa"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
     </ul>
   </div>
 </div>
@@ -10578,6 +10580,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
       -->
       <li class="salinityDataset_mod" id="salinityDataset_mod_roms_mari"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
       <li class="salinityDataset_mod" id="salinityDataset_mod_roms_marig"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
+      <li class="salinityDataset_mod" id="salinityDataset_mod_roms_samoa"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
     </ul>
   </div>
   <div name="salinityInfos" id="salinityInfo_sat">
@@ -10644,6 +10647,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
       <li class="sstDataset_mod" id="sstDataset_mod_roms_hiomsg"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
       <li class="sstDataset_mod" id="sstDataset_mod_roms_mari"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
       <li class="sstDataset_mod" id="sstDataset_mod_roms_marig"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
+      <li class="sstDataset_mod" id="sstDataset_mod_roms_samoa"><a href="http://oos.soest.hawaii.edu/thredds/idd/ocn_mod.html" class="normalLink">Regional Ocean Modeling System (ROMS)</a></li>
     </ul>
   </div>
   <div name="sstInfos" id="sstInfo_sat">
@@ -10763,7 +10767,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
 
 <div id="shark_animation_ids" class="dropdown dropdown-tip">
   <ul class="dropdown-menu">
-    <!--#include virtual="ssi/sharksTigerTrack_ids_mobile.html" -->
+    <!--#include file="ssi/sharksTigerTrack_ids_mobile.html" -->
   </ul>
 </div>
 
