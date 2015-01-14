@@ -267,6 +267,7 @@ var hideMenu = false;
 var sheltersShown = false; // emergency shelter overlay on?
 var toolActivated = false; // has a tool like the ruler been used?
 var sharkInfoShown = false; // explanation of most recent sightings for project page
+var cetaceanInfoShown = false; // explanation of most recent sightings for project page
 
 // Global to store whether PacIOOS boundaries (EEZ and geographic) have been
 // overlayed onto the map yet or not:
@@ -288,6 +289,7 @@ var minZooms = {
   'ascat': 8,
   'avhrr': 10,
   'doppler': 11,
+  'g1sst': 12,
   'hfradio': 12,
   'hmrg': 14,
   'hycom': 10,
@@ -317,6 +319,7 @@ var minZooms = {
   'ww3': 8,
   'ww3_hawaii': 11,
   'ww3_marianas': 11,
+  'ww3_nwhi': 11,
   'ww3_samoa': 11
 }
 
@@ -331,6 +334,7 @@ var pointDatasets = [
     'beachsafety',
     'cwb',
     'dart',
+    'gauges',
     'himb',
     'ioc',
     'ndbc',
@@ -352,7 +356,8 @@ var invalidMaps = {
 // the live/production version; i.e. stuff that's being worked on, etc.:
 
 var devonlyMaps = {
-  'sharks2': 1
+  'cetaceans': 1
+  //'sharks2': 1
 }
  
 // Define characteristics for each region:
@@ -388,8 +393,8 @@ var regions = {
       'sealevelhazards': { 
         'sources': {
           'obs': { 
-            'url': 'haz:10+11+13',
-            'category': 'hazards',
+            'url': 'hazf:1,hazf:4,lfore:1',
+            'category': 'hazardsForecasts,levelForecast',
             'datasets': [ 'harbor_surge', 'high_sea_level', 'wave_runup' ],
             'maptype': 'm'
           } 
@@ -412,9 +417,9 @@ var regions = {
             'maptype': 'm'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -563,8 +568,8 @@ var regions = {
       'sealevelhazards': {
         'sources': {
           'obs': {
-            'url': 'haz:10',
-            'category': 'hazards',
+            'url': 'lfore:1',
+            'category': 'levelForecast',
             'datasets': [ 'high_sea_level' ],
             'maptype': 'm',
             'bounds': 'jumpTo( "Tutuila" )'
@@ -616,9 +621,9 @@ var regions = {
             'bounds': 'jumpTo( "Tutuila" )'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           }
@@ -662,8 +667,15 @@ var regions = {
             'datasets': [ 'ww3_samoa' ],
             'date_field': 'surfForecastDate',
             'time_field': 'surfForecastTime'
+          },
+          'obs': {
+            'url': 'wave:1::c52',
+            'category': 'waves',
+            'datasets': [ 'pacioos_cdip' ],
+            'maptype': 'm'
           }
-        }
+        },
+        'default': 'obs'
       },
       'wind': {
         'sources': {
@@ -776,9 +788,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -918,9 +930,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -1060,9 +1072,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -1181,8 +1193,8 @@ var regions = {
           'sealevelhazards': {
             'sources': {
               'obs': {
-                'url': 'haz:10',
-                'category': 'hazards',
+                'url': 'lfore:1',
+                'category': 'levelForecast',
                 'datasets': [ 'high_sea_level' ],
                 'maptype': 'm'
               }
@@ -1231,9 +1243,9 @@ var regions = {
                 'maptype': 'm'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -1276,8 +1288,16 @@ var regions = {
                 'datasets': [ 'swan_samoa' ],
                 'date_field': 'surfForecastDate',
                 'time_field': 'surfForecastTime'
+              },
+              'obs': {
+                'url': 'wave:1::c52',
+                'category': 'waves',
+                'datasets': [ 'pacioos_cdip' ],
+                'maptype': 'm',
+                'bounds': 'zoomToBounds( -14.4722, -170.9883, -14.1316, -170.4036 )'
               }
-            }
+            },
+            'default': 'obs'
           },
           'wind': {
             'sources': {
@@ -1402,9 +1422,9 @@ var regions = {
             'bounds': 'jumpTo( "Saipan" )'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -1538,9 +1558,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -1666,9 +1686,9 @@ var regions = {
                 'maptype': 'm'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -1802,9 +1822,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -1916,9 +1936,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2038,9 +2058,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2149,9 +2169,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2260,9 +2280,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2371,9 +2391,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2482,9 +2502,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2593,9 +2613,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2704,9 +2724,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2815,9 +2835,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -2926,9 +2946,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3037,9 +3057,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3148,9 +3168,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3231,9 +3251,9 @@ var regions = {
             'depth_field': 'oceanForecastDepth'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -3317,9 +3337,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3396,9 +3416,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3475,9 +3495,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3561,9 +3581,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -3683,6 +3703,16 @@ var regions = {
           }
         } 
       },    
+      'sealevelhazards': {
+        'sources': {
+          'obs': {
+            'url': 'lfore:1',
+            'category': 'levelForecast',
+            'datasets': [ 'high_sea_level' ],
+            'maptype': 'm'
+          }
+        }
+      },
       'sst': {
         'sources': {
           'mod': {
@@ -3694,9 +3724,9 @@ var regions = {
             'depth_field': 'oceanForecastDepth'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -3811,7 +3841,7 @@ var regions = {
             'url': 'bsafe:2:1',
             'category': 'beachSafety',
             'datasets': [ 'beachsafety' ]
-          },
+          }
         },
         'default': 'obs1'
       },
@@ -3840,6 +3870,15 @@ var regions = {
           }
         },
         'default': 'obs1'
+      },
+      'cetaceans': {
+        'sources': {
+          'obs': {
+            'url': '',
+            'category': 'wildlife',
+            'datasets': [ 'crc' ]
+          }
+        }
       },
       'chart': {
         'sources': {
@@ -3875,9 +3914,9 @@ var regions = {
       'cyclone': {
         'sources': {
           'obs': {
-            'url': 'haz:7',
-            'url_small': 'haz:7::l0',
-            'category': 'hazards',
+            'url': 'hazf:2',
+            'url_small': 'hazf:2::l0',
+            'category': 'hazardsForecasts',
             'datasets': [ 'nhc' ], 
             'maptype': 'm',
             'bounds': 'zoomToBounds( 7.0976, -166.6296, 28.5334, -129.2102 )'
@@ -3907,11 +3946,28 @@ var regions = {
           }
         }
       },
+      'gauges': {
+        'sources': {
+          'obs1': {
+            'url': 'rsrc:2::c52',
+            'category': 'waterResources',
+            'datasets': [ 'gauges' ],
+            'maptype': 'm'
+          },
+          'obs2': {
+            'url': 'rsrc:1::v1',
+            'category': 'waterResources',
+            'datasets': [ 'gauges' ],
+            'maptype': 'm'
+          }
+        },
+        'default': 'obs1'
+      },
       'sealevelhazards': { 
         'sources': {
           'obs': { 
-            'url': 'haz:10+11+13',
-            'category': 'hazards',
+            'url': 'hazf:1,hazf:4,lfore:1',
+            'category': 'hazardsForecasts,levelForecast',
             'datasets': [ 'harbor_surge', 'high_sea_level', 'wave_runup' ],
             'maptype': 'm'
           }
@@ -3926,15 +3982,15 @@ var regions = {
           }
         }
       },
-      'sharks2': {
-        'sources': {
-          'obs': {
-            'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-            'category': 'sharksTigerSight',
-            'datasets': [ 'himb' ]
-          }  
-        }
-      },  
+      //'sharks2': {
+      //  'sources': {
+      //    'obs': {
+      //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+      //      'category': 'sharksTigerSight',
+      //      'datasets': [ 'himb' ]
+      //    }  
+      //  }
+      //},  
       'sst': {
         'sources': {
           'mod': {
@@ -3952,9 +4008,9 @@ var regions = {
             'maptype': 'm'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           }
@@ -3991,8 +4047,8 @@ var regions = {
       'tsunami': {
         'sources': {
           'obs': {
-            'url': 'haz:4',
-            'category': 'hazards',
+            'url': 'hazb:2',
+            'category': 'hazardsBasemaps',
             'datasets': [ 'tsunami' ],
             'bounds': 'jumpTo( "O\'ahu" )',
             'maptype': 'm'
@@ -4081,7 +4137,7 @@ var regions = {
                 'url': 'bsafe:2:1',
                 'category': 'beachSafety',
                 'datasets': [ 'beachsafety' ]
-              },
+              }
             },
             'default': 'obs1'
           },
@@ -4108,6 +4164,15 @@ var regions = {
             },
             'default': 'obs1'
           },
+          'cetaceans': {
+            'sources': {
+              'obs': {
+                'url': '',
+                'category': 'wildlife',
+                'datasets': [ 'crc' ]
+              } 
+            } 
+          },  
           'chart': {
             'sources': {
               'obs': {
@@ -4140,6 +4205,23 @@ var regions = {
               }
             }
           },
+          'gauges': {
+            'sources': {
+              'obs1': {
+                'url': 'rsrc:2::c52',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              },
+              'obs2': {
+                'url': 'rsrc:1::v1',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              }
+            },
+            'default': 'obs1'
+          },
           'sharks': {
             'sources': {
               'obs': {
@@ -4149,20 +4231,20 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sealevelhazards': {
             'sources': {
               'obs': {
-                'url': 'haz:10+11+13',
-                'category': 'hazards',
+                'url': 'lfore:1',
+                'category': 'levelForecast',
                 'datasets': [ 'high_sea_level' ],
                 'maptype': 'm'
               } 
@@ -4185,9 +4267,9 @@ var regions = {
                 'maptype': 'm'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -4215,8 +4297,8 @@ var regions = {
           'tsunami': {
             'sources': {
               'obs': {
-                'url': 'haz:4',
-                'category': 'hazards',
+                'url': 'hazb:2',
+                'category': 'hazardsBasemaps',
                 'datasets': [ 'tsunami' ],
                 'maptype': 'm'
               }
@@ -4338,15 +4420,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -4358,9 +4440,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -4444,7 +4526,7 @@ var regions = {
                 'url': 'bsafe:2:1',
                 'category': 'beachSafety',
                 'datasets': [ 'beachsafety' ]
-              },
+              }
             },
             'default': 'obs1'
           },
@@ -4513,11 +4595,28 @@ var regions = {
               }
             }
           },
+          'gauges': {
+            'sources': {
+              'obs1': {
+                'url': 'rsrc:2::c52',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              },
+              'obs2': {
+                'url': 'rsrc:1::v1',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              }
+            },
+            'default': 'obs1'
+          },
           'sealevelhazards': {
             'sources': {
               'obs': {
-                'url': 'haz:10+11+13',
-                'category': 'hazards',
+                'url': 'lfore:1',
+                'category': 'levelForecast',
                 'datasets': [ 'high_sea_level' ],
                 'maptype': 'm'
               }
@@ -4532,15 +4631,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -4552,9 +4651,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -4582,8 +4681,8 @@ var regions = {
           'tsunami': {
             'sources': {
               'obs': {
-                'url': 'haz:4',
-                'category': 'hazards',
+                'url': 'hazb:2',
+                'category': 'hazardsBasemaps',
                 'datasets': [ 'tsunami' ],
                 'maptype': 'm'
               }
@@ -4724,15 +4823,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -4753,9 +4852,9 @@ var regions = {
               //  'depth_field': 'oceanForecastDepth'
               //},
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -4783,8 +4882,8 @@ var regions = {
           'tsunami': {
             'sources': {
               'obs': {
-                'url': 'haz:4',
-                'category': 'hazards',
+                'url': 'hazb:2',
+                'category': 'hazardsBasemaps',
                 'datasets': [ 'tsunami' ],
                 'maptype': 'm'
               }
@@ -4863,7 +4962,7 @@ var regions = {
                 'url': 'bsafe:2:1',
                 'category': 'beachSafety',
                 'datasets': [ 'beachsafety' ]
-              },
+              }
             },
             'default': 'obs1'
           },
@@ -4932,11 +5031,28 @@ var regions = {
               }
             }
           },
+          'gauges': {
+            'sources': {
+              'obs1': {
+                'url': 'rsrc:2::c52',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              },
+              'obs2': {
+                'url': 'rsrc:1::v1',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              }
+            },
+            'default': 'obs1'
+          },
           'sealevelhazards': {
             'sources': {
               'obs': {
-                'url': 'haz:10+11+13',
-                'category': 'hazards',
+                'url': 'lfore:1',
+                'category': 'levelForecast',
                 'datasets': [ 'high_sea_level' ],
                 'maptype': 'm'
               }
@@ -4951,15 +5067,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -4977,9 +5093,9 @@ var regions = {
                 'maptype': 'm'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -5007,8 +5123,8 @@ var regions = {
           'tsunami': {
             'sources': {
               'obs': {
-                'url': 'haz:4',
-                'category': 'hazards',
+                'url': 'hazb:2',
+                'category': 'hazardsBasemaps',
                 'datasets': [ 'tsunami' ],
                 'maptype': 'm'
               }
@@ -5140,6 +5256,17 @@ var regions = {
               }
             }
           },
+          'gauges': {
+            'sources': {
+              'obs2': {
+                'url': 'rsrc:1::v1',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              }
+            },
+            'default': 'obs2'
+          },
           'sharks': {
             'sources': {
               'obs': {
@@ -5149,15 +5276,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -5178,9 +5305,9 @@ var regions = {
               //  'depth_field': 'oceanForecastDepth'
               //},
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -5201,8 +5328,8 @@ var regions = {
           'tsunami': {
             'sources': {
               'obs': {
-                'url': 'haz:4',
-                'category': 'hazards',
+                'url': 'hazb:2',
+                'category': 'hazardsBasemaps',
                 'datasets': [ 'tsunami' ],
                 'maptype': 'm'
               }
@@ -5317,15 +5444,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -5337,9 +5464,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -5423,7 +5550,7 @@ var regions = {
                 'url': 'bsafe:2:1',
                 'category': 'beachSafety',
                 'datasets': [ 'beachsafety' ]
-              },
+              }
             },
             'default': 'obs1'
           },
@@ -5519,11 +5646,28 @@ var regions = {
               }
             }
           },
+          'gauges': {
+            'sources': {
+              'obs1': {
+                'url': 'rsrc:2::c52',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              },
+              'obs2': {
+                'url': 'rsrc:1::v1',
+                'category': 'waterResources',
+                'datasets': [ 'gauges' ],
+                'maptype': 'm'
+              }
+            },
+            'default': 'obs1'
+          },
           'sealevelhazards': {
             'sources': {
               'obs': {
-                'url': 'haz:10+11+13',
-                'category': 'hazards',
+                'url': 'hazf:1,hazf:4,lfore:1',
+                'category': 'hazardsForecasts,levelForecast',
                 'datasets': [ 'harbor_surge', 'high_sea_level', 'wave_runup' ],
                 'maptype': 'm'
               }
@@ -5538,15 +5682,15 @@ var regions = {
               }
             }
           },
-          'sharks2': {
-            'sources': {
-              'obs': {
-                'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
-                'category': 'sharksTigerSight',
-                'datasets': [ 'himb' ]
-              }
-            }
-          },
+          //'sharks2': {
+          //  'sources': {
+          //    'obs': {
+          //      'url': 'tigss:1:d1n25i-1s3q0P1Dq1',
+          //      'category': 'sharksTigerSight',
+          //      'datasets': [ 'himb' ]
+          //    }
+          //  }
+          //},
           'sst': {
             'sources': {
               'mod': {
@@ -5582,9 +5726,9 @@ var regions = {
                 'maptype': 'm'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -5613,8 +5757,8 @@ var regions = {
           'tsunami': {
             'sources': {
               'obs': {
-                'url': 'haz:4',
-                'category': 'hazards',
+                'url': 'hazb:2',
+                'category': 'hazardsBasemaps',
                 'datasets': [ 'tsunami' ],
                 'maptype': 'm'
               }
@@ -5706,9 +5850,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -5811,9 +5955,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -5841,9 +5985,9 @@ var regions = {
           'waves': {
             'sources': {
               'mod': {
-                'url': 'sfore:4:ft:d1',
+                'url': 'sfore:4:ft:d12',
                 'category': 'surfForecast',
-                'datasets': [ 'ww3' ],
+                'datasets': [ 'ww3_nwhi' ],
                 'date_field': 'surfForecastDate',
                 'time_field': 'surfForecastTime'
               }
@@ -5916,9 +6060,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6014,9 +6158,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6112,9 +6256,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6210,9 +6354,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6308,9 +6452,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6413,9 +6557,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6436,9 +6580,9 @@ var regions = {
           'waves': {
             'sources': {
               'mod': {
-                'url': 'sfore:4:ft:d1',
+                'url': 'sfore:4:ft:d12',
                 'category': 'surfForecast',
-                'datasets': [ 'ww3' ],
+                'datasets': [ 'ww3_nwhi' ],
                 'date_field': 'surfForecastDate',
                 'time_field': 'surfForecastTime'
               }
@@ -6511,9 +6655,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6534,9 +6678,9 @@ var regions = {
           'waves': {
             'sources': {
               'mod': {
-                'url': 'sfore:4:ft:d1',
+                'url': 'sfore:4:ft:d12',
                 'category': 'surfForecast',
-                'datasets': [ 'ww3' ],
+                'datasets': [ 'ww3_nwhi' ],
                 'date_field': 'surfForecastDate',
                 'time_field': 'surfForecastTime'
               }
@@ -6609,9 +6753,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               }
@@ -6701,9 +6845,9 @@ var regions = {
             'depth_field': 'oceanForecastDepth'
           },
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -6796,9 +6940,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -6884,9 +7028,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -6972,9 +7116,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7060,9 +7204,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7155,9 +7299,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7243,9 +7387,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7338,9 +7482,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7440,6 +7584,16 @@ var regions = {
           }
         }
       },
+      'sealevelhazards': {
+        'sources': {
+          'obs': {
+            'url': 'lfore:1',
+            'category': 'levelForecast',
+            'datasets': [ 'high_sea_level' ],
+            'maptype': 'm'
+          }
+        }
+      },
       'sst': {
         'sources': {
           'mod': {
@@ -7451,9 +7605,9 @@ var regions = {
             'depth_field': 'oceanForecastDepth'
           },  
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -7537,9 +7691,9 @@ var regions = {
       'sealevelhazards': { 
         'sources': {
           'obs': { 
-            'url': 'haz:10',
-            'category': 'hazards',
-            'datasets': [ 'high_sea_level' ],
+            'url': 'hazf:4,lfore:1',
+            'category': 'hazardsForecasts,levelForecast',
+            'datasets': [ 'high_sea_level', 'wave_runup' ],
             'maptype': 'm'
           } 
         }   
@@ -7555,9 +7709,9 @@ var regions = {
             'depth_field': 'oceanForecastDepth'
           },  
           'sat': {
-            'url': 'sat:2:f:d2',
+            'url': 'sat:19:f:d32',
             'category': 'satelliteData',
-            'datasets': [ 'avhrr' ],
+            'datasets': [ 'g1sst' ],
             'date_field': 'satelliteDataDate',
             'time_field': 'satelliteDataTime'
           } 
@@ -7590,8 +7744,15 @@ var regions = {
             'datasets': [ 'ww3' ],
             'date_field': 'surfForecastDate',
             'time_field': 'surfForecastTime'
+          },
+          'obs': {
+            'url': 'wave:1::c52',
+            'category': 'waves',
+            'datasets': [ 'pacioos_cdip' ],
+            'maptype': 'm'
           }
-        }
+        },
+        'default': 'obs'
       },
       'wind': {
         'sources': {
@@ -7633,8 +7794,8 @@ var regions = {
           'sealevelhazards': { 
             'sources': {
               'obs': { 
-                'url': 'haz:10',
-                'category': 'hazards',
+                'url': 'lfore:1',
+                'category': 'levelForecast',
                 'datasets': [ 'high_sea_level' ],
                 'maptype': 'm'
               } 
@@ -7651,9 +7812,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },  
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7729,9 +7890,9 @@ var regions = {
           'sealevelhazards': { 
             'sources': {
               'obs': { 
-                'url': 'haz:10',
-                'category': 'hazards',
-                'datasets': [ 'high_sea_level' ],
+                'url': 'hazf:4,lfore:1',
+                'category': 'hazardsForecasts,levelForecast',
+                'datasets': [ 'high_sea_level', 'wave_runup' ],
                 'maptype': 'm'
               } 
             }   
@@ -7747,9 +7908,9 @@ var regions = {
                 'depth_field': 'oceanForecastDepth'
               },  
               'sat': {
-                'url': 'sat:2:f:d2',
+                'url': 'sat:19:f:d32',
                 'category': 'satelliteData',
-                'datasets': [ 'avhrr' ],
+                'datasets': [ 'g1sst' ],
                 'date_field': 'satelliteDataDate',
                 'time_field': 'satelliteDataTime'
               } 
@@ -7782,8 +7943,15 @@ var regions = {
                 'datasets': [ 'ww3' ],
                 'date_field': 'surfForecastDate',
                 'time_field': 'surfForecastTime'
+              },
+              'obs': {
+                'url': 'wave:1::c52',
+                'category': 'waves',
+                'datasets': [ 'pacioos_cdip' ],
+                'maptype': 'm'
               }
-            }
+            },
+            'default': 'obs'
           },
           'wind': {
             'sources': {
@@ -8013,16 +8181,24 @@ function onDeviceReady () {
     }
   );
 
+  // Cetacean animation tag ID selector button:
+                
+  $( '#cetacean_animation_selector' ).button(
+    {         
+      icons: { primary: "ui-icon-triangle-1-s" }
+    }       
+  );   
+
   // "shelter" button for emergency shelter locations in Hawaii:
 
   $( '#shelter_button' ).button().click(
     function () {
       if ( sheltersShown ) {
-        document.getElementById( 'map_frame' ).contentWindow.toggleOverlay( 'haz3', false );
+        document.getElementById( 'map_frame' ).contentWindow.toggleOverlay( 'hazb1', false );
         sheltersShown = false;
       }
       else {
-        document.getElementById( 'map_frame' ).contentWindow.displayOverlaysInURL( 'haz:3' );
+        document.getElementById( 'map_frame' ).contentWindow.displayOverlaysInURL( 'hazb:1' );
         sheltersShown = true;
       }
     } // click function
@@ -8248,33 +8424,36 @@ function loadMap () {
 
   // When Voyager map is loaded, hide loading screen and show intro screen:
 
-  var retry_interval_id = setInterval(
-    function () {
+  $('#map_frame').one('load', function() {
+    var retry_interval_id = setInterval(
+      function () {
 
-      // Global "map" variable accessible yet?:
+        // Global "map" variable accessible yet?:
 
-      if ( document.getElementById("map_frame").contentWindow.map ) {
+        if ( document.getElementById("map_frame").contentWindow.map ) {
 
-        // Google Maps API accessible yet?:
+          // Google Maps API accessible yet?:
 
-        if ( document.getElementById("map_frame").contentWindow.map.getCenter() ) {
+          if ( document.getElementById("map_frame").contentWindow.map.getCenter()
+            && document.getElementById("map_frame").contentWindow.map.getBounds() ) {
 
-          //if ( typeof( document.getElementById( 'map_frame' ).contentWindow._gmap_loaded ) != 'undefined'
-          //  && document.getElementById( 'map_frame' ).contentWindow._gmap_loaded == true ) {
+            //if ( typeof( document.getElementById( 'map_frame' ).contentWindow._gmap_loaded ) != 'undefined'
+            //  && document.getElementById( 'map_frame' ).contentWindow._gmap_loaded == true ) {
 
-            // Any URL parameters? If so, go to selected screen:
+              // Any URL parameters? If so, go to selected screen:
 
-            landingPage();
+              landingPage();
 
-            // Stop retrying now that overlay is displayed:
+              // Stop retrying now that overlay is displayed:
 
-            clearInterval( retry_interval_id );
-          //}
+              clearInterval( retry_interval_id );
+            //}
+          }
         }
-      }
-    },
-    50
-  );
+      },
+      50
+    );
+  });
  
   // On non-touch devices, default Google Maps UI includes pan and zoom
   // controls in upper-left, so move "layers" menu icon:
@@ -8307,6 +8486,8 @@ function landingPage () {
   var island   = get_URL_param( 'island'   );
   var variable = get_URL_param( 'variable' );
   var source   = get_URL_param( 'source'   );
+  var shark    = get_URL_param( 'shark'    );
+  var cetacean = get_URL_param( 'cetacean' );
 
   if ( screen == 'regions' ) {
     showRegions();
@@ -8333,24 +8514,7 @@ function landingPage () {
       prevIsland = island;
       hideMenu   = hide_menu;
 
-      showMap( variable, source );
-
-      // Load a shark animation?:
-
-      if ( variable == 'sharks' ) {
-    
-        var shark = get_URL_param( 'shark' );
-        if ( shark ) {
-
-          // Give map a little time to load first:
-
-          setTimeout(
-            function () {
-              showShark( shark );
-            }, 1000
-          );
-        }
-      }
+      showMap( variable, source, shark, cetacean );
     }
   }
 
@@ -8368,7 +8532,7 @@ showMap()
 Redirects page with necessary URL parameters. 
 */
 
-function showMap ( variable, source ) {
+function showMap ( variable, source, shark, cetacean ) {
 
   // Update address bar:
 
@@ -8384,9 +8548,15 @@ function showMap ( variable, source ) {
       current_url += '&source=' + source;
     }
     if ( variable == 'sharks' ) {
-      var shark = get_URL_param( 'shark' );
-      if ( shark ) {
-        current_url += '&shark=' + shark;
+      var shark_param = get_URL_param( 'shark' );
+      if ( shark_param ) {
+        current_url += '&shark=' + shark_param;
+      }
+    }
+    if ( variable == 'cetaceans' ) {
+      var cetacean_param = get_URL_param( 'cetacean' );
+      if ( cetacean_param ) {
+        current_url += '&cetacean=' + cetacean_param;
       }
     }
     //window.history.pushState( 'junk', document.title, current_url );
@@ -8401,9 +8571,11 @@ function showMap ( variable, source ) {
     document.getElementById( 'loading_label' ).innerHTML = 'Loading map...';
   }
 
-  // Shark map does not display anything at init, so do not show loading icon:
+  // Shark and cetacean maps do not display anything at init, so do not show
+  // loading icon:
  
-  if ( variable != 'sharks' ) {
+  if ( variable != 'sharks'
+    && variable != 'cetaceans' ) {
     $( '#loading_icon' ).show();
   }
 
@@ -8551,6 +8723,16 @@ function showMap ( variable, source ) {
             }
           }
 
+          // Keep Majuro Atoll within reasonable zoom or stations fall off-screen:
+
+          if ( prevIsland == 'majuro' ) {
+            var min_zoom = 12; 
+            var current_zoom = document.getElementById( "map_frame" ).contentWindow.map.getZoom();
+            if ( current_zoom > min_zoom ) {
+              document.getElementById( "map_frame" ).contentWindow.map.setZoom( min_zoom );
+            }
+          }
+
           // Change map background type?:
 
           var maptype_set = false;
@@ -8593,10 +8775,8 @@ function showMap ( variable, source ) {
           // If no maptype changes have been set, use default (HYBRID):
 
           if ( !maptype_set ) {
-            if ( prevMapType != 'h' ) {
-              mapContent.setMapType( 'h' );
-              prevMapType = 'h';
-            }
+            mapContent.setMapType( 'h' );
+            prevMapType = 'h';
           }
 
           // Add overlay. For small screen sizes, omit legend graphics for now
@@ -8895,6 +9075,12 @@ function showMap ( variable, source ) {
               mapContent.document.getElementById( 'dynaTrackLastDisplayedProgressBarMini' ).style.fontSize = '8pt';
             }
 
+            // Load a shark animation?:
+
+            if ( shark ) {
+              showShark( shark );
+            } 
+
           } // sharks?
 
           // Display time intervals for recent marine organism sightings?:
@@ -8999,6 +9185,77 @@ function showMap ( variable, source ) {
             }
 
           } // sharks2?
+
+          // Display tag IDs for cetacean animations?:
+
+          if ( variable == 'cetaceans' ) {
+         
+            if ( !hideMenu ) { 
+              document.getElementById( 'cetacean_animation_div' ).style.display = 'block';
+
+              if ( isTouch ) {
+                document.getElementById( 'cetacean_animation_div' ).style.top  = '6px';
+                if ( hideMenu ) {
+                  document.getElementById( 'cetacean_animation_div' ).style.left = '8px';
+                }
+                else {
+                  document.getElementById( 'cetacean_animation_div' ).style.left = '47px';
+                }
+              }
+              else {
+                document.getElementById( 'cetacean_animation_div' ).style.top  = '18px';
+                if ( hideMenu ) {
+                  document.getElementById( 'cetacean_animation_div' ).style.left = '89px';
+                }
+                else {
+                  document.getElementById( 'cetacean_animation_div' ).style.left = '130px';
+                }
+              }
+            }
+
+            // Set tracking to auto-zoom to show full spatial extent:
+
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whalesBlainvilleTrackAutoZoom'  ).checked = true;
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whalesKillerFalseTrackAutoZoom' ).checked = true;
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whalesKillerPygmyTrackAutoZoom' ).checked = true;
+
+            // Set maximum number of points to display; mobile devices can
+            // handle much fewer points than regular computers:
+
+            var num_points = 300;
+
+            if ( isTouch ) {
+              num_points = 25;
+            }
+
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whalesBlainvilleTrackNumPoints'  ).value = num_points;
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whalesKillerFalseTrackNumPoints' ).value = num_points;
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whalesKillerPygmyTrackNumPoints' ).value = num_points;
+           
+            // Carl Meyer and Kim Holland would prefer *not* to display lines
+            // connecting the points ("unscientific", they said):
+
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whales_blainville_track_lines'   ).checked = false;
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whales_killer_false_track_lines' ).checked = false;
+            document.getElementById( 'map_frame' ).contentWindow.document.getElementById( 'whales_killer_pygmy_track_lines' ).checked = false;
+ 
+            // Resize animation progress bar window for small screens?:
+            
+            if ( mapContent.isSmallMap( 450, 350 ) ) {
+              mapContent.document.getElementById( 'dynaTrackProgressBarMini' ).style.width = '150px';
+              mapContent.document.getElementById( 'dynaTrackProgressBarBeginMini' ).style.width = '150px';
+              mapContent.document.getElementById( 'dynaTrackProgressSliderMini' ).style.width = '130px';
+              mapContent.document.getElementById( 'dynaTrackProgressSliderMini' ).style.left = '10px';
+              mapContent.document.getElementById( 'dynaTrackLastDisplayedProgressBarMini' ).style.fontSize = '8pt';
+            }
+
+            // Load a shark animation?:
+
+            if ( cetacean ) {
+              showCetacean( cetacean );
+            } 
+
+          } // cetacean?
 
           // Display emergency shelters button?:
 
@@ -9423,9 +9680,22 @@ function showVariables ( region, island ) {
         document.getElementById("map_frame").contentWindow.toggleProgressBar( 'dynaTrackProgressBarMini', null, false );
       }
       else if ( prevCategory == 'sharksTigerTrack' ) {
+        document.getElementById("map_frame").contentWindow.clearCategory( 'sharksTigerSight' ); // in case "most recent" was displayed
         document.getElementById( 'shark_animation_div' ).style.display = 'none';
         document.getElementById("map_frame").contentWindow.toggleProgressBar( 'dynaTrackProgressBar', null, false );
         document.getElementById("map_frame").contentWindow.toggleProgressBar( 'dynaTrackProgressBarMini', null, false );
+      }
+
+      // Clear cetacean tracking optioins:
+
+      if ( prevCategory == 'wildlife' ) {
+        document.getElementById( 'cetacean_info_div' ).style.display = 'none';
+        document.getElementById( 'time_duration_div' ).style.display = 'none';
+        toggleCetaceansDuration( 'time_duration_day', 'skipOverlayUpdate' );
+        document.getElementById("map_frame").contentWindow.toggleProgressBar( 'dynaTrackProgressBar', null, false );
+        document.getElementById("map_frame").contentWindow.toggleProgressBar( 'dynaTrackProgressBarMini', null, false );
+        document.getElementById("map_frame").contentWindow.clearCategory( 'wildlife' ); // in case "most recent" was displayed
+        document.getElementById( 'cetacean_animation_div' ).style.display = 'none';
       }
 
       // Clear "find me" button address markers (if any):
@@ -9434,10 +9704,10 @@ function showVariables ( region, island ) {
 
       // Clear "shelter" button:
 
-      if ( prevCategory == 'hazards'
+      if ( prevCategory == 'hazardsBasemaps'
         || prevCategory == 'floodZones' ) {
         document.getElementById( 'shelter_div' ).style.display = 'none';
-        document.getElementById( 'map_frame' ).contentWindow.toggleOverlay( 'haz3', false );
+        document.getElementById( 'map_frame' ).contentWindow.toggleOverlay( 'hazb1', false );
         sheltersShown = false;
       }
 
@@ -9710,6 +9980,188 @@ function showRecentSharks () {
 
 
 /*
+showCetacean()
+Shows the animation of the select cetacean tag identifier.
+*/
+              
+function showCetacean ( tag_id ) {
+              
+  if ( !tag_id ) {
+    return;   
+  }         
+
+  History.pushState( { state: 'junk' }, document.title, 'index.html?region=hi&variable=cetaceans&cetacean=' + tag_id );
+
+  // Define species category for each tag identifier:
+
+  var category = getTagCategory( tag_id, 'name' ); 
+
+  if ( tag_id == 'recent' ) {
+    showRecentCetaceans();
+  }         
+  else if ( !category ) {
+    return;
+  }
+  else {
+    document.getElementById( 'cetacean_info_div' ).style.display = 'none';
+    var mapContent = document.getElementById( 'map_frame' ).contentWindow;
+    mapContent.clearCategory( 'wildlife' );
+    mapContent.setDynaTrackIdentifier( category, 'CRC', tag_id, false, 'animate' );
+  }
+
+} // showCetacean()
+
+
+/*
+showRecentCetaceans()
+Shows the most recent detection in the past 24 hours of any of the available
+cetacean tag IDs.
+*/
+
+function showRecentCetaceans () {
+
+  var mapContent = document.getElementById( 'map_frame' ).contentWindow;
+
+  mapContent.closeDialog(); // any previous dialog windows (from no sharks sighted)?
+  mapContent.clearCategory( 'wildlife' );
+  mapContent.jumpTo( 'Pacific', null, 'usePan' );
+
+  //toggleCetaceansDuration( 'time_duration_day' );
+  toggleCetaceansDuration( 'time_duration_any' );
+
+  // Show info message for project page?:
+
+  if ( top.location.href.match( /projects\/cetaceans\// )
+    && !cetaceanInfoShown ) {
+    document.getElementById( 'cetacean_info_div' ).style.display = '';
+    cetaceanInfoShown = true;
+  }
+
+} // showRecentCetaceans()
+
+
+/*
+toggleCetaceansDuration()
+Sets the duration before present for showing tagged cetacean locations.
+*/
+
+function toggleCetaceansDuration ( duration_id, skipOverlayUpdate ) {
+
+  if ( !duration_id ) {
+    duration_id = prevTimeDuration;
+    document.getElementById( 'mobile_clear_track' ).style.display = 'none';
+    document.getElementById( 'mobile_time_durations' ).style.display = 'block';
+  }
+
+  prevTimeDuration = duration_id;
+
+  // Set style of duration element to show that it is currently selected:
+
+  var time_durations = document.getElementsByName( 'time_durations' );
+
+  for ( var i = 0; i < time_durations.length; i++ ) {
+  
+    var this_id = time_durations[ i ].id;
+
+    if ( duration_id == this_id ) { 
+      time_durations[ i ].style.fontStyle = 'italic';
+      time_durations[ i ].style.textDecoration = 'underline';
+    }
+    else {
+      time_durations[ i ].style.fontStyle = 'normal';
+      time_durations[ i ].style.textDecoration = 'none';
+    }
+  }
+
+  // Clear the current overlay:
+  
+  document.getElementById("map_frame").contentWindow.clearCategory( 'wildlife' ); 
+
+  // Modify the URL for the new time span and display the new overlay:
+
+  if ( !skipOverlayUpdate ) {
+
+    var category_ids = getTagCategory( null, 'id' );
+
+    var overlay_param = '';
+
+    for ( var i = 0; i < category_ids.length; i++ ) {
+
+      var category_id = category_ids[ i ]; 
+      overlay_param += category_id + 's:1:d3i-1s3';
+
+      if ( duration_id.match( /day/ ) ) {
+        overlay_param += 'q0P1Dq1';
+      }
+      else if ( duration_id.match( /week/ ) ) {
+        overlay_param += 'q0P7Dq1';
+      }
+      else if ( duration_id.match( /month/ ) ) {
+        overlay_param += 'q0P1Mq1';
+      }
+      else if ( duration_id.match( /any/ ) ) {
+        // do nothing...
+      }
+
+      overlay_param += ',';
+    }
+
+    overlay_param = overlay_param.replace( /,$/, '' );
+
+    document.getElementById( "map_frame" ).contentWindow.displayOverlaysInURL( overlay_param );
+  } 
+      
+} // toggleCetaceansDuration()
+
+
+/*
+getTagCategory()
+Returns Voyager category for the given species tag identifier. It will return
+either the category identifier or category name depending on whether you
+specify "id" or "name" for the id_or_name argument. If no tag_id is supplied,
+the function will instead return an array of all categories.
+*/
+
+function getTagCategory ( tag_id, id_or_name ) {
+
+  var category_id   = '';
+  var category_name = '';
+
+  var category_ids   = [ 'blain', 'fkill', 'pkill' ]; 
+  var category_names = [ 'whalesBlainvilleTrack', 'whalesKillerFalseTrack', 'whalesKillerPygmyTrack' ]; 
+
+  if ( !tag_id ) {
+    if ( id_or_name == 'id' ) {
+      return category_ids;
+    }
+    else {
+      return category_names;
+    }
+  }
+  else if ( tag_id == 'FaTag002' ) {
+    category_id   = 'pkill';
+    category_name = 'whalesKillerPygmyTrack';
+  }
+  else if ( tag_id == 'MdTag005' ) {
+    category_id   = 'blain';
+    category_name = 'whalesBlainvilleTrack';
+  }
+  else if ( tag_id == 'PcTag026' ) {
+    category_id   = 'pkill';
+    category_name = 'whalesKillerFalseTrack';
+  }
+
+  if ( id_or_name == 'id' ) {
+    return category_id;
+  }
+  else {
+    return category_name;
+  }
+
+} // getTagCategory()
+
+
+/*
 isDevVersion()
 This function looks at the current URL and decides whether it is the
 development version of this interface or not. Returns true or false.
@@ -9797,6 +10249,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
 <div id="depth_icon" style="position: absolute; left: 8px; top: 152px; z-index: 2; display: none;"><img src="img/icon_depth.jpg" width="32" height="43" onMouseOver="this.src='img/icon_depth_highlight.jpg'" onMouseOut="this.src='img/icon_depth.jpg'" title="Show depth/elevation of clicked location..." onClick="showDepth()" /></div>
 <div id="time_duration_div" class="alpha50" style="margin: 0; padding: 4px; position: absolute; font-family: Arial, Helvetica, Verdana, sans-serif; display: none;"><div id="mobile_time_durations"><p style="margin: 0; padding: 0;"><font color="white" size="-1"><b>spotted in the past:</b></font></p><p style="margin: 0; padding: 0;"><a href="javascript:void(0)" name="time_durations" id="time_duration_day" class="sidebarUtility" style="font-style: italic; text-decoration: underline;" onClick="toggleSharksDuration( this.id ); this.blur();">day</a> &#149; <a href="javascript:void(0)" name="time_durations" id="time_duration_week" class="sidebarUtility" onClick="toggleSharksDuration( this.id ); this.blur();">week</a> &#149; <a href="javascript:void(0)" name="time_durations" id="time_duration_month" class="sidebarUtility" onClick="toggleSharksDuration( this.id ); this.blur();">month</a></p></div><div id="mobile_clear_track" style="width: 130px; display: none;"><p style="margin: 0; padding: 0;" align="center"><a href="javascript:void(0)" class="sidebarUtility" onClick="toggleSharksDuration(); this.blur();">clear track</a></p></div></div>
 <div id="shark_animation_div" style="margin: 0; padding: 4px; position: absolute; display: none;"><button id="shark_animation_selector" style="width: 130px; font-size: 12px;" data-dropdown="#shark_animation_ids">Which shark?</button></div>
+<div id="cetacean_animation_div" style="margin: 0; padding: 4px; position: absolute; display: none;"><button id="cetacean_animation_selector" style="width: 140px; font-size: 12px;" data-dropdown="#cetacean_animation_ids">Which cetacean?</button></div>
 <div id="shelter_div" style="margin: 0; padding: 4px; position: absolute; display: none;"><button id="shelter_button" style="width: 80px; font-size: 12px;">shelter</button></div>
 </div>
 <div id="shark_info_div" style="display: none;">
@@ -9805,6 +10258,14 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
   <div style="position: absolute; width: 300px; height: 150px; bottom: 22px; right: 8px; color: white; font-size: 1em; z-index: 998;">
     <h2 style="color: white; padding-left: 10px;">Most Recent Detections</h2>
     <p style="color: white; padding-left: 10px;">This map shows the most recent detection of each tagged tiger shark. Select a shark from the left-hand menu to see the full animated track for that individual.</p>
+  </div>
+</div>
+<div id="cetacean_info_div" style="display: none;">
+  <div style="position: absolute; width: 300px; height: 150px; bottom: 22px; right: 8px; background: none repeat scroll 0% 0% rgb(0, 0, 0); opacity: 0.4; z-index: 997; border: 2px solid black;"></div>
+  <img src="img/close2.png" width="21" height="20" style="position: absolute; bottom: 148px; right: 16px; z-index: 999;" onMouseOver="this.src='img/close2Highlight.png'" onMouseOut="this.src='img/close2.png'" onClick="document.getElementById( 'cetacean_info_div' ).style.display = 'none';"/>
+  <div style="position: absolute; width: 300px; height: 150px; bottom: 22px; right: 8px; color: white; font-size: 1em; z-index: 998;">
+    <h2 style="color: white; padding-left: 10px;">Most Recent Detections</h2>
+    <p style="color: white; padding-left: 10px;">This map shows the most recent detection of each tagged whale and dolphin. Select a cetacean from the left-hand menu to see the full animated track for that individual.</p>
   </div>
 </div>
 <!-- END MAP DIV -->
@@ -9935,11 +10396,20 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
       <button name="info" id="sharksInfoButton" onClick="$( '#sharksInfo' ).dialog( 'open' ); document.getElementById( 'sharksLink' ).blur();">Dataset info...</button>
     </div>
   </div>
+  <!--
   <div class="variableDiv" id="sharks2Div">
     <div>
       <button name="source" id="sharks2Source" data-dropdown="#sharks2Sources" data-horizontal-offset="6">Select data source...</button>
       <button name="variable" id="sharks2" onClick="showMap( this.id )">Shark Tracking2</button>
       <button name="info" id="sharks2InfoButton" onClick="$( '#sharks2Info' ).dialog( 'open' ); document.getElementById( 'sharks2Link' ).blur();">Dataset info...</button>
+    </div>
+  </div>
+  -->
+  <div class="variableDiv" id="cetaceansDiv">
+    <div>
+      <button name="source" id="cetaceansSource" data-dropdown="#cetaceansSources" data-horizontal-offset="6">Select data source...</button>
+      <button name="variable" id="cetaceans" onClick="showMap( this.id )">Cetacean Tracking</button>
+      <button name="info" id="cetaceansInfoButton" onClick="$( '#cetaceansInfo' ).dialog( 'open' ); document.getElementById( 'cetaceansLink' ).blur();">Dataset info...</button>
     </div>
   </div>
   <div class="variableDiv" id="beachsafetyDiv">
@@ -9996,6 +10466,13 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
       <button name="source" id="sstSource" data-dropdown="#sstSources" data-horizontal-offset="6">Select data source...</button>
       <button name="variable" id="sst" onClick="showMap( this.id )">Water Temperature</button>
       <button name="info" id="sstInfoButton" onClick="$( '#sstInfo' ).dialog( 'open' ); document.getElementById( 'sstLink' ).blur();">Dataset info...</button>
+    </div>
+  </div>
+  <div class="variableDiv" id="gaugesDiv">
+    <div>
+      <button name="source" id="gaugesSource" data-dropdown="#gaugesSources" data-horizontal-offset="6">Select data source...</button>
+      <button name="variable" id="gauges" onClick="showMap( this.id )">Water Resources</button>
+      <button name="info" id="gaugesInfoButton" onClick="$( '#gaugesInfo' ).dialog( 'open' ); document.getElementById( 'gaugesLink' ).blur();">Dataset info...</button>
     </div>
   </div>
   <div class="variableDiv" id="chartDiv">
@@ -10302,6 +10779,12 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
   </ul>
 </div>
 
+<div id="cetaceansSources" class="dropdown dropdown-tip">
+  <ul class="dropdown-menu">
+    <li class="cetaceansSource" id="cetaceansSource_obs" style="height: 32px;"><img src="img/icon_gauge.jpg" align="left" style="padding-right: 4px;"/> <a href="javascript:void(0)" onClick="showMap( 'cetaceans', 'obs' )"><span id="cetaceansSource_obs_label">Observed</span></a></li>
+  </ul>
+</div>
+
 <div id="chartSources" class="dropdown dropdown-tip">
   <ul class="dropdown-menu">
     <li class="chartSource" id="chartSource_obs" style="height: 32px;"><img src="img/icon_map.png" align="left" style="padding-right: 4px;"/> <a href="javascript:void(0)" onClick="showMap( 'chart', 'obs' )"><span id="chartSource_obs_label">Map</span></a></li>
@@ -10348,6 +10831,13 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
   </ul>
 </div>
 
+<div id="gaugesSources" class="dropdown dropdown-tip">
+  <ul class="dropdown-menu">
+    <li class="gaugesSource" id="gaugesSource_obs1" style="height: 32px;"><img src="img/icon_gauge.jpg" align="left" style="padding-right: 4px;"/> <a href="javascript:void(0)" onClick="showMap( 'gauges', 'obs1' )"><span id="gaugesSource_obs1_label">Rain Gauges</span></a></li>
+    <li class="gaugesSource" id="gaugesSource_obs2" style="height: 32px;"><img src="img/icon_gauge.jpg" align="left" style="padding-right: 4px;"/> <a href="javascript:void(0)" onClick="showMap( 'gauges', 'obs2' )"><span id="gaugesSource_obs2_label">Stream Gauges</span></a></li>
+  </ul>
+</div>
+
 <div id="salinitySources" class="dropdown dropdown-tip">
   <ul class="dropdown-menu">
     <li class="salinitySource" id="salinitySource_obs" style="height: 32px;"><img src="img/icon_gauge.jpg" align="left" style="padding-right: 4px;"/> <a href="javascript:void(0)" onClick="showMap( 'salinity', 'obs' )"><span id="salinitySource_obs_label">Observed</span></a></li>
@@ -10378,11 +10868,13 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
   </ul>
 </div>
 
+<!--
 <div id="sharks2Sources" class="dropdown dropdown-tip">
   <ul class="dropdown-menu">
     <li class="sharks2Source" id="sharks2Source_obs" style="height: 32px;"><img src="img/icon_gauge.jpg" align="left" style="padding-right: 4px;"/> <a href="javascript:void(0)" onClick="showMap( 'sharks2', 'obs' )"><span id="sharks2Source_obs_label">Observed</span></a></li>
   </ul>
 </div>
+-->
 
 <div id="sstSources" class="dropdown dropdown-tip">
   <ul class="dropdown-menu">
@@ -10468,7 +10960,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
   <div id="beachsafetyInfo_obs">
     <img src="img/icon_gauge.jpg" width="32" height="32" align="left" style="padding-right: 4px; margin-left: -8px;"/><h2>Observed</h2>
     <ul style="margin-bottom: 20px;">
-      <li class="beachsafetyDataset_obs" id="beachsafetyDataset_obs_beachsafety"><a id="beachsafetyLink" href="http://www.hawaiibeachsafety.org" class="normalLink">Hawai&#699;i Beach Safety</a></li>
+      <li class="beachsafetyDataset_obs" id="beachsafetyDataset_obs_beachsafety"><a id="beachsafetyLink" href="http://www.hawaiibeachsafety.com" class="normalLink">Hawai&#699;i Beach Safety</a></li>
     </ul>
     <p><b>Nearshore:</b> This describes the beach and nearshore conditions. This information is important to beach goers, swimmers, snorkelers and surfers.</p>
     <p><b>Offshore:</b> This describes the offshore conditions. This information is important for kayakers and boaters.</p>
@@ -10482,6 +10974,16 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
     <ul style="margin-bottom: 20px;">
       <li class="benthicDataset_obs" id="benthicDataset_obs_benthic"><a id="benthicLink" href="http://ccma.nos.noaa.gov/products/biogeography/" class="normalLink">NOAA Shallow-Water Benthic Habitats</a></li>
     </ul>
+  </div>
+</div>
+
+<div id="cetaceansInfo" name="infoDialog" title="Data sources..." style="display: none; background-color: white; font-size: small;">  <div id="cetaceansInfo_obs">
+    <img src="img/icon_gauge.jpg" width="32" height="32" align="left" style="padding-right: 4px; margin-left: -8px;"/><h2>Observed</h2>    <p style="margin-left: 28px; margin-top: -14px;"><i>Directly measured with instruments:</i></p>
+    <ul style="margin-bottom: 20px;">
+      <li class="cetaceansDataset_obs" id="cetaceansDataset_obs_crc"><a id="cetaceansLink" href="http://www.cascadiaresearch.org/hawaii/hawaii.htm" class="normalLink">Cascadia Research Collective (CRC)</a></li>
+    </ul>
+    <p>This shows the movements of several cetaceans (whales and dolphins) who were fitted with satellite tags near Kona off the west coast of Big Island. This intermittently tracks their locations over time as the cetaceans breach the water's surface.</p>
+    <p><font color="darkred"><b>Caution:</b></font> Cetaceans can move substantially since their most recently reported positions. Geolocation estimates from the Argos satellite can be off by a mile or more.</p>
   </div>
 </div>
 
@@ -10565,6 +11067,19 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
   </div>
 </div>
 
+<div id="gaugesInfo" name="infoDialog" title="Data sources..." style="display: none; background-color: white; font-size: small;">
+  <div id="gaugesInfo_obs">
+    <img src="img/icon_gauge.jpg" width="32" height="32" align="left" style="padding-right: 4px; margin-left: -8px;"/><h2>Observed</h2>
+    <p style="margin-left: 28px; margin-top: -14px;"><i>Directly measured with instruments:</i></p>
+    <ul style="margin-bottom: 20px;">
+      <li class="gaugesDataset_obs" id="gaugesDataset_obs_gauges"><a id="gaugesLink" href="http://waterdata.usgs.gov/nwis/" class="normalLink">USGS National Water Information System</a></li>
+    </ul>
+    <p><b>Rain Gauges:</b> Provides accumulated rainfall totals at about 20 locations across Hawai&#699;i.</p>
+    <p><b>Stream Gauges:</b> Measures stream height and discharge at about 60 locations across Hawai&#699;i.</p>
+    <p>Data are updated at 15 minute intervals.</p>
+  </div>
+</div>
+
 <div id="salinityInfo" name="infoDialog" title="Data sources..." style="display: none; background-color: white; font-size: small;">
   <div name="salinityInfos" id="salinityInfo_obs">
     <img src="img/icon_gauge.jpg" width="32" height="32" align="left" style="padding-right: 4px; margin-left: -8px;"/><h2>Observed</h2>
@@ -10616,12 +11131,13 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
     <ul style="margin-bottom: 20px;">
       <li class="sharksDataset_obs" id="sharksDataset_obs_himb"><a id="sharksLink" href="http://www.hawaii.edu/HIMB/ReefPredator/Tiger%20Shark%20Research.htm" class="normalLink">Hawai&#699;i Institute of Marine Biology</a></li>
     </ul>
-    <p>This shows the movements of several tiger sharks who were fitted with satellite tags near Maui. This intermittently tracks their locations over time as the sharks breach the water's surface.</p>
+    <p>This shows the movements of several tiger sharks who were fitted with satellite tags near Maui and O&#699;ahu. This intermittently tracks their locations over time as the sharks breach the water's surface.</p>
     <!--<p>To view and animate the track of a tiger shark, select a tag identifier from the pull-down menu that appears.</p>-->
     <p><font color="darkred"><b>Caution:</b></font> Sharks can move substantially since their most recently reported positions. Geolocation estimates from the Argos satellite can be off by a mile or more. There are many more sharks in the ocean than those tagged for this project.</p>
   </div>
 </div>
 
+<!--
 <div id="sharks2Info" name="infoDialog" title="Data sources..." style="display: none; background-color: white; font-size: small;">
   <div id="sharks2Info_obs">
     <img src="img/icon_gauge.jpg" width="32" height="32" align="left" style="padding-right: 4px; margin-left: -8px;"/><h2>Observed</h2>
@@ -10633,6 +11149,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
     <p>To view and animate the track of a particular tiger shark, click on a marker and select "show track" in the pop-up window that appears.</p>
   </div>
 </div>
+-->
 
 <div id="sstInfo" name="infoDialog" title="Data sources..." style="display: none; background-color: white; font-size: small;">
   <div name="sstInfos" id="sstInfo_obs">
@@ -10661,6 +11178,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
     <p style="margin-left: 28px; margin-top: -14px;"><i>Remotely sensed from outer space:</i></p>
     <ul style="margin-bottom: 20px;">
       <li class="sstDataset_sat" id="sstDataset_sat_avhrr"><a href="http://noaasis.noaa.gov/NOAASIS/ml/avhrr.html" class="normalLink">Advanced Very High Resolution Radiometer (AVHRR)</a> via <a href="http://oceanwatch.pifsc.noaa.gov/thredds/catalog.html" class="normalLink">NOAA OceanWatch</a></li>
+      <li class="sstDataset_sat" id="sstDataset_sat_g1sst"><a href="http://podaac.jpl.nasa.gov/dataset/JPL_OUROCEAN-L4UHfnd-GLOB-G1SST" class="normalLink">Global 1-km Sea Surface Temperature (G1SST)</a> via <a href="http://oceanwatch.pfeg.noaa.gov/thredds/catalog.html" class="normalLink">NOAA/PFEL</a></li>
     </ul>
   </div>
 </div>
@@ -10724,6 +11242,7 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
       <li class="wavesDataset_mod" id="wavesDataset_mod_ww3"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">WaveWatch III (WW3)</a></li>
       <li class="wavesDataset_mod" id="wavesDataset_mod_ww3_hawaii"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">WaveWatch III (WW3)</a></li>
       <li class="wavesDataset_mod" id="wavesDataset_mod_ww3_marianas"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">WaveWatch III (WW3)</a></li>
+      <li class="wavesDataset_mod" id="wavesDataset_mod_ww3_nwhi"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">WaveWatch III (WW3)</a></li>
       <li class="wavesDataset_mod" id="wavesDataset_mod_ww3_samoa"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">WaveWatch III (WW3)</a></li>
       <li class="wavesDataset_mod" id="wavesDataset_mod_swan_apra"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">Simulating WAves Nearshore (SWAN)</a></li>
       <li class="wavesDataset_mod" id="wavesDataset_mod_swan_bigisland"><a href="http://oos.soest.hawaii.edu/thredds/idd/wav_mod.html" class="normalLink">Simulating WAves Nearshore (SWAN)</a></li>
@@ -10773,32 +11292,34 @@ function setCookie ( cookie_name, cookie_value, num_days_before_expires ) {
 
 <div id="shark_animation_ids" class="dropdown dropdown-tip">
   <ul class="dropdown-menu">
-    <li><a href="javascript:void(0)" onClick="showRecentSharks()">most recent</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '81182' )">81182</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '122985' )">122985</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133361' )">133361</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133362' )">133362</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133363' )">133363</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133365' )">133365</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133366' )">133366</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133367' )">133367</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133368' )">133368</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133369' )">133369</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133370' )">133370</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133371' )">133371</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133372' )">133372</a></li>
-    <li><a href="javascript:void(0)" onClick="showShark( '133373' )">133373</a></li>
+    <!--#include file="ssi/sharksTigerTrack_ids_mobile.html" -->
   </ul>
 </div>
+
+<!-- Drop-down menu for specifying a cetacean tag ID to animate: -->
+      
+<div id="cetacean_animation_ids" class="dropdown dropdown-tip">
+  <ul class="dropdown-menu">
+    <!--#include file="ssi/cetaceansTrack_ids_mobile.html" -->
+  </ul></div>
 
 <!-- BORDER FOR INTRO SCREEN; MUST BE PLACED BELOW OTHER DIVS
      IN ORDER FOR HIDE/SHOW TO WORK: -->
 <div id="outer_border" class="alwayscentered" style="z-index: 2; display: none;">
 
-<!-- Google Analytics: -->
-<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"> </script>
-<script type="text/javascript"> _uacct = "UA-4095884-4"; urchinTracker(); </script>
-<!-- END Google Analytics -->
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-4095884-4', 'auto');
+ga('require', 'displayfeatures');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
 
 </body>
 </html>
